@@ -1,2 +1,2 @@
-# linked_lists_c
+# linked lists c
 generic linked list for c languaje
