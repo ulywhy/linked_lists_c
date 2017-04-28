@@ -1,85 +1,90 @@
-#ifndef linked_list
-#define linked_list
+#include<stdlib.h>
 
-struct element{
-	struct element *prev;
-	struct element *next;
-	void * value;
-	};
+#ifndef LINKED_LIST
+#define LINKED_LIST
+
+typedef struct elem{
+	struct elem *prev;
+	struct elem *next;
+	void *node;
+} Element;
 
 typedef struct {
-	struct element *first;
-	struct element *last;
-	int nelements;
-	} linkedlist;
+	Element *first;
+	Element *last;
+	int n_elements;
+} Linkedlist;
 
 
-extern char* mode;
-char* mode = "stack";
-linkedlist* begin_list ();
-struct element* begin_element(void *);
-int list_empty(linkedlist *);
-struct element* insert(linkedlist *, struct element*);
-void* extract(linkedlist *);
-int list_free(linkedlist *, void(*)());
+linkedlist * list_init ();
+Element * element_create (void *);
+int list_is_empty (Linkedlist *);
+Element * list_insert (Linkedlist *, Element *);
+void * list_extract (Linkedlist *);
+int list_free (Linkedlist *, void(*)());
 
-linkedlist* begin_list (){
-	linkedlist *list = (linkedlist *) malloc(sizeof(linkedlist));
-	list->nelements = 0;
+Linkedlist* list_init (){
+	Linkedlist * list = (Linkedlist *) malloc(sizeof(Linkedlist));
+	list->n_elements = 0;
 	list->first = list->last  = NULL;
 	return list;
 }
 
-struct element* begin_element(void * value){
-	struct element * el = malloc(sizeof(struct element));
-	el->prev = el->next = NULL;
-	el->value = value;
-	return el;
+Element * element_create (void *node){
+	Element *element = malloc(sizeof(Element));
+	element->prev = element->next = NULL;
+	element->node = node;
+	return element;
 }
 
-int list_empty(linkedlist * list){
-	if(list->nelements) return list->nelements;
-	else return 0;
-}
-
-struct element* insert(linkedlist * list, struct element* el){
-	if(!list_empty(list)){
-		list->last = list->first = el;
-		el->prev = el->next = NULL;
+int list_empty (Linkedlist *list){
+	if (list->n_elements){
+		return list->n_elements;
 	}
-	else if(list_empty(list) == 1){
-		list->last = el;
-		el->prev = list->first;
-		(list->first)->next = el;
+	else{
+		return 0;
+	}
+}
+
+/*insert an element as the last element of the list*/
+struct element * list_insert (Linkedlist *list, Element *element){
+	if (!list_empty(list)){
+		list->last = list->first = element;
+		element->prev = element->next = NULL;
+	}
+	else if (list_empty(list) == 1){
+		list->last = element;
+		element->prev = list->first;
+		(list->first)->next = element;
 	}
 	else {
-		(list->last)->next = el;
-		el->prev = list->last;
-		list->last = el;
+		(list->last)->next = element;
+		element->prev = list->last;
+		list->last = element;
 	}
-	list->nelements++;
-	return el;
+	++(list->n_elements);
+	return element;
 }
 
-void * extract(linkedlist * list){
-	struct element* aux;
-	void * value;
-	if(!strcmp(mode, "stack")){puts("stack");
-		aux = list->last;
-		if(aux == NULL) return NULL;
-		else if(list_empty(list) == 1) list->last = list->first = NULL;
-		else list->last = (list->last)->prev;
-	} else if(!strcmp(mode, "queue")) {
-		puts("queue");
-		aux = list->first;
-		if(aux == NULL) return NULL;
-		else if(list_empty(list) == 1) list->last = list->first = NULL;
-		else list->first = (list->first)->next;
+void * list_extract (Linkedlist *list){
+	Element *element;
+	void *node;
+	element = list->last;
+	if (element == NULL){
+		return NULL;
 	}
-	aux->prev = aux->next = NULL;
-	list->nelements--;
-	value = aux->value;
-	free(aux);
+	else{
+		if (list_empty (list) == 1){
+			list->last = list->first = NULL;
+		}
+		else {
+			list->last = (list->last)->prev;
+		}
+		element->prev = element->next = NULL;
+	}
+	--(list->nelements);
+	node = elenemt->value;
+	free(element);
 	return value;		
 }
 #endif
